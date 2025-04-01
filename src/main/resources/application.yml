@@ -1,1 +1,7 @@
-spring.application.name=spring-dev
+spring:
+  datasource:
+    url: jdbc:h2:mem:testdb
+
+  h2:
+    console:
+      enabled: true
