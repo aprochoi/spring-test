@@ -1,7 +1,10 @@
 package com.superym.spring_dev.repository;
 
 import com.superym.spring_dev.domain.Article;
-import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface BlogRepository extends JpaRepository<Article, Long> {
+import java.util.List;
+
+public interface BlogRepository {
+    Article save(Article article);
+    List<Article> findAll();
 }
