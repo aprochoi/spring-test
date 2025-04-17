@@ -20,7 +20,8 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
@@ -70,5 +71,72 @@ class BlogApiControllerTest {
         assertThat(articles.getFirst().getContent()).isEqualTo(content);
     }
 
+    @DisplayName("findAllArticles : 블로그 글 조회 성공")
+    @Test
+    public void findAllArticles() throws Exception {
+        //given
+        final String url = "/api/articles";
+        final String title = "Hanwha Eagles";
+        final String content = "Victory";
 
+        blogRepository.save(Article.builder()
+                .title(title)
+                .content(content)
+                .build());
+
+        //when
+        final ResultActions resultActions = mockMvc.perform(get(url)
+                .accept(MediaType.APPLICATION_JSON));
+
+        //then
+        resultActions
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].content").value(content))
+                .andExpect(jsonPath("$[0].title").value(title));
+    }
+
+    @DisplayName("findArticle : 블로그 id를 받아 글 조회 성공")
+    @Test
+    public void findArticle() throws Exception {
+        //given
+        final String url = "/api/articles/{id}";
+        final String title = "Hanwha Eagles";
+        final String content = "10연승";
+
+        Article savedArticle = blogRepository.save(Article.builder()
+                .title(title)
+                .content(content)
+                .build());
+
+        //when
+        final ResultActions resultActions = mockMvc.perform(get(url, savedArticle.getId()));
+
+        //then
+        resultActions
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content").value(content))
+                .andExpect(jsonPath("$.title").value(title));
+    }
+
+    @DisplayName("deleteArticle : id 받아 글 삭제 성공")
+    @Test
+    public void deleteArticle() throws Exception {
+        //given
+        final String url = "/api/articles/{id}";
+        final String title = "Hanwha Eagles";
+        final String content = "10연승";
+
+        Article savedArticle = blogRepository.save(Article.builder()
+                .title(title)
+                .content(content)
+                .build());
+
+        //when
+        mockMvc.perform(delete(url, savedArticle.getId())).andExpect(status().isOk());
+
+        //then
+        List<Article> articles = blogRepository.findAll();
+
+        assertThat(articles.isEmpty());
+    }
 }

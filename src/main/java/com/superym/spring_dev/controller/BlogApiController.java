@@ -3,14 +3,12 @@ package com.superym.spring_dev.controller;
 import com.superym.spring_dev.domain.Article;
 import com.superym.spring_dev.dto.AddArticleRequest;
 import com.superym.spring_dev.dto.ArticleResponse;
+import com.superym.spring_dev.dto.UpdateArticleRequest;
 import com.superym.spring_dev.service.BlogService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -34,5 +32,27 @@ public class BlogApiController {
                 .toList();
 
         return ResponseEntity.ok().body(articles);
+    }
+
+    @GetMapping("/api/articles/{id}")
+    public ResponseEntity<ArticleResponse> findArticle(@PathVariable long id) {
+        Article article = blogService.findById(id);
+
+        return ResponseEntity.ok().body(new ArticleResponse(article));
+    }
+
+    @DeleteMapping("/api/articles/{id}")
+    public ResponseEntity<Void> deleteArticle(@PathVariable long id) {
+        blogService.delete(id);
+
+        return ResponseEntity.ok().build();
+    }
+
+    @PutMapping("/api/articles/{id}")
+    public ResponseEntity<Article> updateArticle(@PathVariable long id,
+                                                 @RequestBody UpdateArticleRequest request) {
+        Article article = blogService.update(id, request);
+
+        return ResponseEntity.ok().body(article);
     }
 }

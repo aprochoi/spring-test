@@ -2,6 +2,7 @@ package com.superym.spring_dev.service;
 
 import com.superym.spring_dev.domain.Article;
 import com.superym.spring_dev.dto.AddArticleRequest;
+import com.superym.spring_dev.dto.UpdateArticleRequest;
 import com.superym.spring_dev.repository.BlogRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -21,5 +22,23 @@ public class BlogService {
 
     public List<Article> findAll() { return blogRepository.findAll(); }
 
+    public Article findById(long id) {
+        return blogRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("not found " + id));
+    }
+
+    public void delete(long id) {
+        blogRepository.delete(id);
+    }
+
+    @Transactional
+    public Article update(long id, UpdateArticleRequest request) {
+        Article article = blogRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("not found " + id));
+
+        article.update(request.getTitle(), request.getContent());
+
+        return article;
+    }
 }
 

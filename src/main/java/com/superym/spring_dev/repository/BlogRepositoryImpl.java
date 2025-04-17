@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 @RequiredArgsConstructor
@@ -20,5 +21,20 @@ public class BlogRepositoryImpl implements BlogRepository {
     @Override
     public List<Article> findAll() {
         return jpa.findAll();
+    }
+
+    @Override
+    public void deleteAll() {
+        jpa.deleteAll();
+    }
+
+    @Override
+    public Optional<Article> findById(Long id) {
+        return jpa.findById(id);
+    }
+
+    @Override
+    public void delete(Long id) {
+        jpa.deleteById(id);
     }
 }

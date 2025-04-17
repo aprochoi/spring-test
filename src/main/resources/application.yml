@@ -1,7 +1,13 @@
 spring:
   datasource:
-    url: jdbc:h2:mem:testdb
-
-  h2:
-    console:
-      enabled: true
+    url: jdbc:mysql://localhost:3306/blogdb?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Seoul
+    username: root
+    password: manager0
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
