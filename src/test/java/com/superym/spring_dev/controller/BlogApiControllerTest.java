@@ -3,6 +3,7 @@ package com.superym.spring_dev.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.superym.spring_dev.domain.Article;
 import com.superym.spring_dev.dto.AddArticleRequest;
+import com.superym.spring_dev.dto.UpdateArticleRequest;
 import com.superym.spring_dev.repository.BlogRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -137,6 +138,38 @@ class BlogApiControllerTest {
         //then
         List<Article> articles = blogRepository.findAll();
 
-        assertThat(articles.isEmpty());
+        assertThat(articles).isEmpty();
+    }
+
+    @DisplayName("UpdateArticle : 블로그 글 수정")
+    @Test
+    public void updateArticle() throws Exception {
+        //given
+        final String url = "/api/articles/{id}";
+        final String title = "한화 이글스 현재 8연승";
+        final String content = "구단 최소 선발 8연승 진행 중 이대로 10연승까지 가자!";
+
+        Article savedArticle = blogRepository.save(Article.builder()
+                .title(title)
+                .content(content)
+                .build());
+
+        final String newTitle = "new Title";
+        final String newContent = "new Content";
+
+        UpdateArticleRequest request = new UpdateArticleRequest(newTitle, newContent);
+
+        //when
+        ResultActions result = mockMvc.perform(put(url, savedArticle.getId())
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .content(objectMapper.writeValueAsString(request)));
+
+        //then
+        result.andExpect(status().isOk());
+
+        Article article = blogRepository.findById(savedArticle.getId()).get();
+
+        assertThat(article.getTitle()).isEqualTo(newTitle);
+        assertThat(article.getContent()).isEqualTo(newContent);
     }
 }
